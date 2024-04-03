@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model stores {
+  id              Int          @id @default(autoincrement())
+  name            String       @db.VarChar(255)
+  description     String       @db.VarChar(255)
+  document        String       @db.VarChar(45)
+  street          String       @db.VarChar(255)
+  zip             String       @db.VarChar(255)
+  district        String       @db.VarChar(255)
+  state           String       @db.VarChar(45)
+  number          String       @db.VarChar(45)
+  complement      String?      @db.VarChar(45)
+  city            String       @db.VarChar(255)
+  primary_color   String?      @default("#000") @db.VarChar(45)
+  secondary_color String?      @default("#FFF") @db.VarChar(45)
+  logo            String?      @db.VarChar(45)
+  createdAt       DateTime     @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime     @default(now()) @db.Timestamp(0)
+  user_store      user_store[]
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  document   String       @unique(map: "document_UNIQUE") @db.VarChar(45)
+  email      String       @unique(map: "email_UNIQUE") @db.VarChar(155)
+  phone      String       @db.VarChar(45)
+  password   String       @db.VarChar(255)
+  zip        String       @db.VarChar(255)
+  street     String       @db.VarChar(255)
+  district   String       @db.VarChar(45)
+  state      String       @db.VarChar(45)
+  number     String       @db.VarChar(45)
+  complement String?      @db.VarChar(45)
+  city       String       @db.VarChar(45)
+  isAdmin    Int          @default(0)
+  createdAt  DateTime     @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime     @default(now()) @db.Timestamp(0)
+  user_store user_store[]
+}
+
+model user_store {
+  userId  Int
+  storeId Int
+  admin   Int
+  owner   Int    @default(0)
+  stores  stores @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store")
+  users   users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+
+  @@id([userId, storeId])
+  @@index([storeId], map: "fk_store_idx")
+  @@map("user-store")
+}
