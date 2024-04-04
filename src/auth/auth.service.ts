@@ -93,14 +93,14 @@ export class AuthService {
     if (!(await bcrypt.compare(data.password, user.password))) {
       throw new UnauthorizedException('Dados incorretos!');
     }
-
+    console.log(user.id)
     return this.getUserStores(user.id);
   }
 
   async getUserStores(userId: number) {
     const userStores = await this.prismaService.user_store.findMany({
       where: {
-        userId: userId,
+        userId,
       },
       include: {
         stores: {

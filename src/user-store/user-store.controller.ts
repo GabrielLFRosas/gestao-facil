@@ -12,8 +12,8 @@ export class UserStoreController {
   constructor(private readonly userStoreService: UserStoreService) {}
 
   @Post()
-  async create(@Body() data: UserStoreDTO, @Store() storeId: number) {
-    return this.userStoreService.create(data, storeId);
+  async create(@Body() data: UserStoreDTO) {
+    return this.userStoreService.create(data);
   }
 
   @UseGuards(StoreAdminGuard)

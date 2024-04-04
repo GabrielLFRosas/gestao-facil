@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { CreateStockControlDTO } from './dto/create-stock-control.dto';
@@ -7,7 +8,7 @@ import { CreateStockControlDTO } from './dto/create-stock-control.dto';
 export class StockControlService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateStockControlDTO, user?: any) {
+  async create(data: CreateStockControlDTO, user?: users) {
     const stock = await this.prisma.stock.findFirst({
       where: { id: data.stockId },
     });
@@ -19,11 +20,13 @@ export class StockControlService {
       newAmount = stock.amount + Number(data.changeAmount);
     }
 
+    console.log(user)
+
     const stockControl = await this.prisma.stock_control.create({
       data: {
         stockId: data.stockId,
-        saleId: data?.saleId,
-        userId: data?.userId ? data?.userId : user.id,
+        saleId: data?.saleId || null,
+        userId: user?.id,
         lastAmount: stock.amount,
         newAmount,
         changeAmount: Number(data.changeAmount),

@@ -5,8 +5,9 @@ export class CreateStockControlDTO {
   @IsInt()
   stockId: number;
 
+  @IsOptional()
   @IsInt()
-  userId: number;
+  userId?: number;
 
   @IsOptional()
   @IsInt()

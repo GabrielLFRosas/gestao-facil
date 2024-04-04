@@ -1,4 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { users } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { StoreAdminGuard } from 'src/auth/guards/store-admin.guard';
 import { User } from 'src/decorators/user.decorator';
@@ -13,7 +14,7 @@ export class StockControlController {
   constructor(private readonly stockControlService: StockControlService){}
 
   @Post()
-  async create(@Body() data: CreateStockControlDTO, @User() user: any){
-    return this.stockControlService.create(data);
+  async create(@Body() data: CreateStockControlDTO, @User() user: users){
+    return this.stockControlService.create(data, user);
   }
 }
