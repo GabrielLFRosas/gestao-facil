@@ -11,6 +11,8 @@ import { StockModule } from './stock/stock.module';
 import { StoreModule } from './store/store.module';
 import { UserStoreModule } from './user-store/user-store.module';
 import { UserModule } from './user/user.module';
+import { ClientModule } from './client/client.module';
+import { SaleModule } from './sale/sale.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { UserModule } from './user/user.module';
     ProductModule,
     StockModule,
     StockControlModule,
+    ClientModule,
+    SaleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

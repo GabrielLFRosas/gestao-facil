@@ -19,6 +19,7 @@ export class ProductService {
         categoryId: data.categoryId,
         description: data.description,
         price: Number(data.price),
+        costPrice: Number(data.costPrice),
         ativo: data?.ativo ? 1 : 0,
       },
       select: { id: true },

@@ -21,19 +21,21 @@ model categories {
 }
 
 model products {
-  id          Int        @unique(map: "id_UNIQUE") @default(autoincrement())
-  storeId     Int
-  categoryId  Int
-  name        String     @db.VarChar(45)
-  description String     @db.VarChar(255)
-  price       Float
-  image       Bytes?     @db.Blob
-  ativo       Int        @default(1)
-  createdAt   DateTime   @default(now()) @db.Timestamp(0)
-  updatedAt   DateTime   @default(now()) @db.Timestamp(0)
-  categories  categories @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_product")
-  stores      stores     @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_product")
-  stock       stock[]
+  id            Int             @unique(map: "id_UNIQUE") @default(autoincrement())
+  storeId       Int
+  categoryId    Int
+  name          String          @db.VarChar(45)
+  description   String          @db.VarChar(255)
+  costPrice     Float           @default(0.00)
+  price         Float
+  image         Bytes?          @db.Blob
+  ativo         Int             @default(1)
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(0)
+  categories    categories      @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_product")
+  stores        stores          @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_product")
+  sale_products sale_products[]
+  stock         stock[]
 
   @@id([id, storeId, categoryId])
   @@index([categoryId], map: "fk_category_product_idx")
@@ -93,7 +95,9 @@ model stores {
   updatedAt       DateTime     @default(now()) @db.Timestamp(0)
   zip             String       @db.VarChar(255)
   categories      categories[]
+  clients         clients[]
   products        products[]
+  sales           sales[]
   user_store      user_store[]
 }
 
@@ -127,6 +131,71 @@ model users {
   updatedAt     DateTime        @default(now()) @db.Timestamp(0)
   isAdmin       Int             @default(0)
   zip           String          @db.VarChar(255)
+  clients       clients[]
+  sales         sales[]
   stock_control stock_control[]
   user_store    user_store[]
+}
+
+model clients {
+  id         Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  storeId    Int
+  name       String   @db.VarChar(255)
+  document   String   @db.VarChar(45)
+  phone      String   @db.VarChar(45)
+  email      String   @db.VarChar(255)
+  birthdate  String   @db.VarChar(45)
+  zip        String   @db.VarChar(45)
+  street     String   @db.VarChar(255)
+  number     String   @db.VarChar(45)
+  complement String?  @db.VarChar(45)
+  district   String   @db.VarChar(45)
+  city       String   @db.VarChar(45)
+  state      String   @db.VarChar(45)
+  createdBy  Int
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime @default(now()) @db.Timestamp(0)
+  stores     stores   @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_client")
+  users      users    @relation(fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_client")
+  sales      sales[]
+
+  @@index([storeId], map: "fk_store_client_idx")
+  @@index([createdBy], map: "fk_user_client_idx")
+}
+
+model sale_products {
+  saleId    Int
+  productId Int
+  amount    Float
+  value     Float
+  discount  Float?
+  products  products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_sale")
+  sales     sales    @relation(fields: [saleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_product")
+
+  @@id([saleId, productId])
+  @@index([productId], map: "fk_product_sale_idx")
+  @@map("sale-products")
+}
+
+model sales {
+  id            Int             @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  storeId       Int
+  clientId      Int?
+  value         Float
+  totalValue    Float
+  discount      Float?
+  comment       String?         @db.Text
+  paymentMehod  Int
+  createdBy     Int
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(0)
+  deletedAt     DateTime?       @db.Timestamp(0)
+  sale_products sale_products[]
+  clients       clients?        @relation(fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_client_sale")
+  stores        stores          @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_sale")
+  users         users           @relation(fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_sale")
+
+  @@index([clientId], map: "fk_client_sale_idx")
+  @@index([storeId], map: "fk_store_sale_idx")
+  @@index([createdBy], map: "fk_user_sale_idx")
 }

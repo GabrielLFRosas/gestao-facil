@@ -25,4 +25,15 @@ export class StockService {
       return { success: false, message: err };
     }
   }
+
+  async getByProduct(productId: number) {
+      const stock = await this.prisma.stock.findFirst({
+        where: {productId}
+      });
+
+      return stock;
+   
+  }
+
+  
 }

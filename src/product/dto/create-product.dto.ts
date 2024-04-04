@@ -13,6 +13,9 @@ export class CreateProductDTO{
   description: string;
 
   @IsDecimal({force_decimal: true, decimal_digits: '2'})
+  costPrice: string;
+
+  @IsDecimal({force_decimal: true, decimal_digits: '2'})
   price: string;
 
   @IsBoolean()
