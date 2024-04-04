@@ -41,16 +41,38 @@ model products {
 }
 
 model stock {
-  id         Int      @default(autoincrement())
-  productId  Int
-  amount     Float    @default(0)
-  typeAmount Int      @default(4)
-  createdAt  DateTime @default(now()) @db.Timestamp(0)
-  updatedAt  DateTime @default(now()) @db.Timestamp(0)
-  products   products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_stock")
+  id            Int             @unique(map: "id_UNIQUE") @default(autoincrement())
+  productId     Int
+  amount        Float           @default(0)
+  typeAmount    Int             @default(4)
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(0)
+  products      products        @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_stock")
+  stock_control stock_control[]
 
   @@id([id, productId])
   @@index([productId], map: "fk_product_stock")
+}
+
+model stock_control {
+  id           Int      @default(autoincrement())
+  stockId      Int
+  userId       Int
+  saleId       Int?
+  lastAmount   Float
+  newAmount    Float
+  changeAmount Float
+  typeChange   Int
+  comment      String?  @db.Text
+  createdAt    DateTime @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @db.Timestamp(0)
+  stock        stock    @relation(fields: [stockId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_stock_control")
+  users        users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_stock_control")
+
+  @@id([id, stockId])
+  @@index([stockId], map: "fk_stock_control_idx")
+  @@index([userId], map: "fk_user_stock_control_idx")
+  @@map("stock-control")
 }
 
 model stores {
@@ -89,21 +111,22 @@ model user_store {
 }
 
 model users {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(255)
-  document   String       @unique(map: "document_UNIQUE") @db.VarChar(45)
-  email      String       @unique(map: "email_UNIQUE") @db.VarChar(155)
-  phone      String       @db.VarChar(45)
-  password   String       @db.VarChar(255)
-  street     String       @db.VarChar(255)
-  district   String       @db.VarChar(45)
-  state      String       @db.VarChar(45)
-  number     String       @db.VarChar(45)
-  complement String?      @db.VarChar(45)
-  city       String       @db.VarChar(45)
-  createdAt  DateTime     @default(now()) @db.Timestamp(0)
-  updatedAt  DateTime     @default(now()) @db.Timestamp(0)
-  isAdmin    Int          @default(0)
-  zip        String       @db.VarChar(255)
-  user_store user_store[]
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  document      String          @unique(map: "document_UNIQUE") @db.VarChar(45)
+  email         String          @unique(map: "email_UNIQUE") @db.VarChar(155)
+  phone         String          @db.VarChar(45)
+  password      String          @db.VarChar(255)
+  street        String          @db.VarChar(255)
+  district      String          @db.VarChar(45)
+  state         String          @db.VarChar(45)
+  number        String          @db.VarChar(45)
+  complement    String?         @db.VarChar(45)
+  city          String          @db.VarChar(45)
+  createdAt     DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(0)
+  isAdmin       Int             @default(0)
+  zip           String          @db.VarChar(255)
+  stock_control stock_control[]
+  user_store    user_store[]
 }
