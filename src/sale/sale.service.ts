@@ -52,7 +52,7 @@ export class SaleService {
               saleId: sale.id,
               changeAmount: product.amount,
               typeChange: TypeChangeEnum.SUB,
-              comment: `Venda ID:${sale.id}`,
+              comment: `Venda ID: ${sale.id}`,
             };
 
             const item = {
@@ -72,13 +72,16 @@ export class SaleService {
           data: dataSalesProduct,
         });
 
-        const stockControl = await this.stockControlService.createMany(dataStockControl, userId)
+        const stockControl = await this.stockControlService.createMany(
+          dataStockControl,
+          userId,
+        );
       });
 
       return {
-        succcess: true, 
-        saleId: sale.id
-      }
+        succcess: true,
+        saleId: sale.id,
+      };
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(

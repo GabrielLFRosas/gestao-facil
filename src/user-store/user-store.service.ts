@@ -56,5 +56,15 @@ export class UserStoreService {
     return true;
   }
 
-  
+  async listUsersByStore(storeId: number) {
+    return this.prisma.users.findMany({
+      include: {
+        user_store: {
+          where: {
+            storeId,
+          },
+        },
+      },
+    });
+  }
 }

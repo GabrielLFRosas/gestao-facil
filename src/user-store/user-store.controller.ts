@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { StoreAdminGuard } from 'src/auth/guards/store-admin.guard';
 import { Store } from 'src/decorators/store.decorator';
@@ -14,5 +14,11 @@ export class UserStoreController {
   @Post()
   async create(@Body() data: UserStoreDTO, @Store() storeId: number) {
     return this.userStoreService.create(data, storeId);
+  }
+
+  @UseGuards(StoreAdminGuard)
+  @Get()
+  async listUsersByStore(@Store() storeId: number){
+    return this.userStoreService.listUsersByStore(storeId);
   }
 }
