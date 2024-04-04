@@ -11,11 +11,11 @@ export class ProductService {
     private readonly stockService: StockService,
   ) {}
 
-  async create(data: CreateProductDTO) {
+  async create(data: CreateProductDTO, storeId: number) {
     const productId = await this.prisma.products.create({
       data: {
         name: data.name,
-        storeId: data.storeId,
+        storeId: storeId,
         categoryId: data.categoryId,
         description: data.description,
         price: Number(data.price),

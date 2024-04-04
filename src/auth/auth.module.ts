@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { StoreModule } from 'src/store/store.module';
 import { UserStoreModule } from 'src/user-store/user-store.module';
 import { UserModule } from 'src/user/user.module';
 
@@ -14,6 +15,7 @@ import { AuthService } from './auth.service';
     }),
     UserModule,
     PrismaModule,
+    StoreModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

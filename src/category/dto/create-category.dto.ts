@@ -1,9 +1,6 @@
-import { IsBoolean, IsInt, IsString } from "class-validator";
+import { IsBoolean, IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateCategoryDTO {
-
-  @IsInt()
-  storeId: number;
 
   @IsString()
   name: string;

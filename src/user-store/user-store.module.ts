@@ -10,9 +10,9 @@ import { UserStoreService } from './user-store.service';
 @Module({
   imports: [
     PrismaModule,
-    AuthModule,
-    UserModule,
-    StoreModule,
+    forwardRef(()=> AuthModule),
+    forwardRef(()=> UserModule),
+    forwardRef(()=> StoreModule),
   ],
   controllers: [UserStoreController],
   providers: [UserStoreService],

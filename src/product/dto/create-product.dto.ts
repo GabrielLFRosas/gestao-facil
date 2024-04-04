@@ -2,8 +2,6 @@ import { IsBoolean, IsDecimal, IsEnum, IsInt, IsNumber, IsOptional, IsString } f
 import { TypeAmountEnum } from "src/enums/type-amount.enum";
 
 export class CreateProductDTO{
-  @IsInt()
-  storeId: number;
 
   @IsInt()
   categoryId: number;

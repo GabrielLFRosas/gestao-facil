@@ -1,15 +1,12 @@
 import { createParamDecorator, ExecutionContext, NotFoundException } from '@nestjs/common';
 
-export const User = createParamDecorator(
-  (filter: string, context: ExecutionContext) => {
+export const Store = createParamDecorator(
+  (context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
-    console.log(request)
-    if (request.user) {
-      if (filter) {
-        return request.user[filter];
-      } else {
+
+    if (request.tokenPayload) {
+     
         return request.user;
-      }
     } else {
       throw new NotFoundException('Usuário não encontrado no request');
     }

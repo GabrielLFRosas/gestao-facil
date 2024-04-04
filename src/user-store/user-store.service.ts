@@ -13,16 +13,16 @@ export class UserStoreService {
     private readonly storeService: StoreService,
   ) {}
 
-  async create(data: UserStoreDTO) {
+  async create(data: UserStoreDTO, storeId: number) {
     try {
       if (
         !this.userService.userExists(data.userId) ||
-        !this.storeService.storeExists(data.storeId)
+        !this.storeService.storeExists(storeId)
       ) {
         throw new NotFoundException('Dados inconsistentes!');
       }
 
-      if (!(await this.validToInsert(data))) {
+      if (!(await this.validToInsert(data, storeId))) {
         return new ConflictException(
           'Este usuário já está associado à esta loja!',
         );
@@ -31,7 +31,7 @@ export class UserStoreService {
       return this.prisma.user_store.create({
         data: {
           userId: data.userId,
-          storeId: data.storeId,
+          storeId,
           admin: data.admin ? 1 : 0,
           owner: data?.owner ? 1 : 0,
         },
@@ -41,11 +41,11 @@ export class UserStoreService {
     }
   }
 
-  async validToInsert(data: UserStoreDTO) {
+  async validToInsert(data: UserStoreDTO, storeId: number) {
     const userStore = await this.prisma.user_store.count({
       where: {
         userId: data.userId,
-        storeId: data.storeId,
+        storeId,
       },
     });
 
@@ -55,4 +55,6 @@ export class UserStoreService {
 
     return true;
   }
+
+  
 }

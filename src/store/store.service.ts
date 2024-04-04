@@ -19,10 +19,12 @@ export class StoreService {
   async storeExists(id: number) {
     const store = await this.prisma.stores.findFirst({ where: { id } });
 
-    if(!store){
+    if (!store) {
       return false;
     }
 
     return true;
   }
+
+  
 }

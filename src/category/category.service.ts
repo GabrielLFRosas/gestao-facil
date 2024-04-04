@@ -8,10 +8,10 @@ export class CategoryService {
 
   constructor(private readonly prisma: PrismaService){}
 
-  async create(data: CreateCategoryDTO){
+  async create(data: CreateCategoryDTO, storeId: number){
     return this.prisma.categories.create({data: {
       name: data.name,
-      storeId: data.storeId,
+      storeId: storeId,
       ativo: data.ativo ? 1 : 0
     }})
   }

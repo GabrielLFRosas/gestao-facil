@@ -3,8 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { users } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { StoreService } from 'src/store/store.service';
+import { UserStoreModule } from 'src/user-store/user-store.module';
+import { UserStoreService } from 'src/user-store/user-store.service';
 
-import { LoginDTO } from './dto/login.dto';
+import { LoginDTO, ValidDTO } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +19,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async createToken(user: users) {
+  async createToken(user: users, storeId: number) {
     return {
       accessToken: this.jwtService.sign(
         {
@@ -25,6 +28,7 @@ export class AuthService {
           document: user.document,
           email: user.email,
           isAdmin: user.isAdmin,
+          storeId
         },
         {
           expiresIn: '30 days',
@@ -72,6 +76,43 @@ export class AuthService {
       throw new UnauthorizedException('Dados incorretos!');
     }
 
-    return this.createToken(user);
+    return this.createToken(user, data.storeId);
+  }
+
+  async valid(data: ValidDTO) {
+    const user = await this.prismaService.users.findFirst({
+      where: {
+        document: data.username,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    if (!(await bcrypt.compare(data.password, user.password))) {
+      throw new UnauthorizedException('Dados incorretos!');
+    }
+
+    return this.getUserStores(user.id);
+  }
+
+  async getUserStores(userId: number) {
+    const userStores = await this.prismaService.user_store.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        stores: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+    
+
+    return userStores.map((userStore) => userStore.stores);
   }
 }

@@ -4,9 +4,6 @@ export class UserStoreDTO{
   @IsInt()
   userId: number;
 
-  @IsInt()
-  storeId: number;
-
   @IsBoolean()
   admin: boolean;
 

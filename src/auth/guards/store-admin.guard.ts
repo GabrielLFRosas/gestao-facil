@@ -23,7 +23,7 @@ export class StoreAdminGuard implements CanActivate {
       );
 
       const userStore = await this.prisma.user_store.findFirst({
-        where: {userId: data.id, admin: 1}
+        where: {userId: data.id, storeId: data.storeId, admin: 1}
       })
       if(!userStore){
         return false;
