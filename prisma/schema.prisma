@@ -7,13 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model categories {
+  id        Int        @id @default(autoincrement())
+  storeId   Int
+  name      String     @db.VarChar(255)
+  ativo     Int        @default(1)
+  createdAt DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt DateTime   @default(now()) @db.Timestamp(0)
+  stores    stores     @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_category")
+  products  products[]
+
+  @@index([storeId], map: "fk_store_category_idx")
+}
+
+model products {
+  id          Int        @unique(map: "id_UNIQUE") @default(autoincrement())
+  storeId     Int
+  categoryId  Int
+  name        String     @db.VarChar(45)
+  description String     @db.VarChar(255)
+  price       Float
+  image       Bytes?     @db.Blob
+  ativo       Int        @default(1)
+  createdAt   DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime   @default(now()) @db.Timestamp(0)
+  categories  categories @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_product")
+  stores      stores     @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_store_product")
+  stock       stock[]
+
+  @@id([id, storeId, categoryId])
+  @@index([categoryId], map: "fk_category_product_idx")
+  @@index([storeId], map: "fk_store_product_idx")
+}
+
+model stock {
+  id         Int      @default(autoincrement())
+  productId  Int
+  amount     Float    @default(0)
+  typeAmount Int      @default(4)
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime @default(now()) @db.Timestamp(0)
+  products   products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_stock")
+
+  @@id([id, productId])
+  @@index([productId], map: "fk_product_stock")
+}
+
 model stores {
   id              Int          @id @default(autoincrement())
   name            String       @db.VarChar(255)
   description     String       @db.VarChar(255)
   document        String       @db.VarChar(45)
   street          String       @db.VarChar(255)
-  zip             String       @db.VarChar(255)
   district        String       @db.VarChar(255)
   state           String       @db.VarChar(45)
   number          String       @db.VarChar(45)
@@ -24,27 +69,10 @@ model stores {
   logo            String?      @db.VarChar(45)
   createdAt       DateTime     @default(now()) @db.Timestamp(0)
   updatedAt       DateTime     @default(now()) @db.Timestamp(0)
+  zip             String       @db.VarChar(255)
+  categories      categories[]
+  products        products[]
   user_store      user_store[]
-}
-
-model users {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(255)
-  document   String       @unique(map: "document_UNIQUE") @db.VarChar(45)
-  email      String       @unique(map: "email_UNIQUE") @db.VarChar(155)
-  phone      String       @db.VarChar(45)
-  password   String       @db.VarChar(255)
-  zip        String       @db.VarChar(255)
-  street     String       @db.VarChar(255)
-  district   String       @db.VarChar(45)
-  state      String       @db.VarChar(45)
-  number     String       @db.VarChar(45)
-  complement String?      @db.VarChar(45)
-  city       String       @db.VarChar(45)
-  isAdmin    Int          @default(0)
-  createdAt  DateTime     @default(now()) @db.Timestamp(0)
-  updatedAt  DateTime     @default(now()) @db.Timestamp(0)
-  user_store user_store[]
 }
 
 model user_store {
@@ -58,4 +86,24 @@ model user_store {
   @@id([userId, storeId])
   @@index([storeId], map: "fk_store_idx")
   @@map("user-store")
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  document   String       @unique(map: "document_UNIQUE") @db.VarChar(45)
+  email      String       @unique(map: "email_UNIQUE") @db.VarChar(155)
+  phone      String       @db.VarChar(45)
+  password   String       @db.VarChar(255)
+  street     String       @db.VarChar(255)
+  district   String       @db.VarChar(45)
+  state      String       @db.VarChar(45)
+  number     String       @db.VarChar(45)
+  complement String?      @db.VarChar(45)
+  city       String       @db.VarChar(45)
+  createdAt  DateTime     @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime     @default(now()) @db.Timestamp(0)
+  isAdmin    Int          @default(0)
+  zip        String       @db.VarChar(255)
+  user_store user_store[]
 }

@@ -5,7 +5,7 @@ import { StoreAdminGuard } from 'src/auth/guards/store-admin.guard';
 import { UserStoreDTO } from './dto/user-store.dto';
 import { UserStoreService } from './user-store.service';
 
-@UseGuards(AuthGuard, StoreAdminGuard)
+@UseGuards(AuthGuard)
 @Controller('user-store')
 export class UserStoreController {
   constructor(private readonly userStoreService: UserStoreService) {}
