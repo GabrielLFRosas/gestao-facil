@@ -89,4 +89,14 @@ export class SaleService {
       );
     }
   }
+
+  async list(storeId: number){
+    return this.prisma.sales.findMany({where: {storeId}, include: {
+      sale_products: {
+        select: {
+          productId: true
+        }
+      }
+    }})
+  }
 }

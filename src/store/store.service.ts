@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { CreateStoreDTO } from './dto/create-store.dto';
+import { UpdateStoreDTO } from './dto/update-store.dto';
 
 @Injectable()
 export class StoreService {
@@ -16,6 +17,15 @@ export class StoreService {
     });
   }
 
+  async update(data: UpdateStoreDTO, id: number) {
+    return this.prisma.stores.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
   async storeExists(id: number) {
     const store = await this.prisma.stores.findFirst({ where: { id } });
 
@@ -25,6 +35,4 @@ export class StoreService {
 
     return true;
   }
-
-  
 }
